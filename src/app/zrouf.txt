@@ -1,0 +1,109 @@
+import { Component } from '@angular/core';
+import { MatTreeModule } from '@angular/material/tree';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { FlatTreeControl } from '@angular/cdk/tree';
+import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
+import { CommonModule } from '@angular/common';
+import JSZip from 'jszip';
+
+interface FileNode {
+  name: string;
+  type: string;
+  children?: FileNode[];
+}
+
+interface FlatNode {
+  expandable: boolean;
+  name: string;
+  level: number;
+}
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [ MatTreeModule, MatIconModule, MatButtonModule, CommonModule],
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css'],
+})
+export class AppComponent {
+  selectedFile: File | null = null;
+  isTreeView: boolean = false;
+  folderStructure: FileNode[] = [];
+
+  private transformer = (node: FileNode, level: number): FlatNode => {
+    return {
+      expandable: !!node.children && node.children.length > 0,
+      name: node.name,
+      level: level,
+    };
+  };
+
+  treeControl = new FlatTreeControl<FlatNode>(
+    (node) => node.level,
+    (node) => node.expandable
+  );
+
+  treeFlattener = new MatTreeFlattener(
+    this.transformer,
+    (node) => node.level,
+    (node) => node.expandable,
+    (node) => node.children
+  );
+
+  dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+
+  onFileSelect(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      const fileName = file.name.toLowerCase();
+      const isZip = fileName.endsWith('.zip');
+      if (isZip) {
+        this.selectedFile = file;
+      } else {
+        alert('Please upload a valid ZIP file.');
+        this.selectedFile = null;
+      }
+    }
+  }
+
+  async uploadFile(): Promise<void> {
+    if (this.selectedFile) {
+      const zip = new JSZip();
+      const folderStructure: FileNode[] = [];
+
+      try {
+        const zipContent = await zip.loadAsync(this.selectedFile);
+        zipContent.forEach((relativePath, file) => {
+          const pathParts = relativePath.split('/');
+          let currentLevel = folderStructure;
+
+          pathParts.forEach((part, index) => {
+            let node = currentLevel.find((item) => item.name === part);
+            if (!node) {
+              node = { name: part, children: [] };
+              currentLevel.push(node);
+            }
+            currentLevel = node.children!;
+          });
+        });
+
+        this.folderStructure = folderStructure;
+        this.isTreeView = true;
+      } catch (error) {
+        console.error('Error reading ZIP file:', error);
+        alert('Failed to read ZIP file.');
+      }
+    }
+  }
+
+  goBack(): void {
+    this.isTreeView = false;
+    this.selectedFile = null;
+    this.folderStructure = [];
+    this.dataSource.data = [];
+  }
+
+  hasChild = (_: number, node: FlatNode) => node.expandable;
+}
+

@@ -1,0 +1,171 @@
+<!-- app.component.html -->
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="#">
+      <i class="fas fa-file-archive me-2"></i>
+      ZIP File Explorer
+    </a>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <!-- Upload Page -->
+  <div *ngIf="!showFileExplorer" class="upload-section">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="mb-0">Upload ZIP File</h4>
+          </div>
+          <div class="card-body text-center">
+            <div class="upload-icon mb-4">
+              <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            
+            <div class="upload-controls">
+              <input 
+                #fileInput
+                type="file" 
+                accept=".zip"
+                class="form-control"
+                (change)="onFileSelected($event)"
+                [class.d-none]="true">
+              
+              <button 
+                class="btn btn-outline-primary me-2" 
+                (click)="fileInput.click()">
+                Select File
+              </button>
+              
+              <button 
+                class="btn btn-primary" 
+                [disabled]="!selectedFile || isUploading"
+                (click)="startUpload()">
+                <i class="fas fa-upload me-2"></i>
+                Upload
+              </button>
+            </div>
+
+            <div *ngIf="selectedFile" class="selected-file mt-3">
+              Selected: {{ selectedFile.name }}
+            </div>
+
+            <div *ngIf="isUploading" class="progress mt-4">
+              <div 
+                class="progress-bar progress-bar-striped progress-bar-animated" 
+                role="progressbar" 
+                [style.width.%]="uploadProgress"
+                [attr.aria-valuenow]="uploadProgress" 
+                aria-valuemin="0" 
+                aria-valuemax="100">
+                {{ uploadProgress }}%
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-header">
+            <h5 class="mb-0">Supported Files</h5>
+          </div>
+          <div class="card-body">
+            <ul class="list-group">
+              <li class="list-group-item d-flex align-items-center">
+                <i class="fas fa-file-code me-2"></i>
+                C# Files (.cs)
+              </li>
+              <li class="list-group-item d-flex align-items-center">
+                <i class="fas fa-file-code me-2"></i>
+                JSON Files (.json)
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Explorer Page -->
+  <div *ngIf="showFileExplorer" class="explorer-container">
+    <div class="row">
+      <!-- Left side - Tree Structure -->
+      <div class="col-md-4 tree-section">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="fas fa-folder-tree me-2"></i>
+              File Structure
+            </h5>
+          </div>
+          <div class="card-body p-0">
+            <div class="tree-view">
+              <ng-container *ngFor="let item of fileStructure; trackBy: trackByPath">
+                <div *ngIf="shouldShowNode(item)" class="tree-item">
+                  <div 
+                    [class.folder]="item.type === 'folder'"
+                    [class.file]="item.type === 'file'"
+                    (click)="onFileClick(item)"
+                    class="node-item">
+                    <i [class]="item.type === 'folder' ? 'fas fa-folder me-2' : 'fas fa-file-code me-2'"></i>
+                    {{ item.name }}
+                  </div>
+                  <div *ngIf="item.type === 'folder' && item.children && item.children.length > 0" 
+                       class="children">
+                    <ng-container *ngFor="let child of item.children; trackBy: trackByPath">
+                      <div *ngIf="shouldShowNode(child)" class="tree-item">
+                        <div 
+                          [class.folder]="child.type === 'folder'"
+                          [class.file]="child.type === 'file'"
+                          (click)="onFileClick(child)"
+                          class="node-item">
+                          <i [class]="child.type === 'folder' ? 'fas fa-folder me-2' : 'fas fa-file-code me-2'"></i>
+                          {{ child.name }}
+                        </div>
+                        <div *ngIf="child.type === 'folder' && child.children && child.children.length > 0" 
+                             class="children">
+                          <ng-container *ngFor="let subChild of child.children; trackBy: trackByPath">
+                            <div *ngIf="shouldShowNode(subChild)" class="tree-item">
+                              <div 
+                                [class.folder]="subChild.type === 'folder'"
+                                [class.file]="subChild.type === 'file'"
+                                (click)="onFileClick(subChild)"
+                                class="node-item">
+                                <i [class]="subChild.type === 'folder' ? 'fas fa-folder me-2' : 'fas fa-file-code me-2'"></i>
+                                {{ subChild.name }}
+                              </div>
+                            </div>
+                          </ng-container>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right side - File Content -->
+      <div class="col-md-8 content-section">
+        <div class="card h-100">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="fas fa-file-lines me-2"></i>
+              {{ selectedFileName || 'File Content' }}
+            </h5>
+          </div>
+          <div class="card-body">
+            <div *ngIf="selectedFileContent" class="file-content">
+              <pre>{{ selectedFileContent }}</pre>
+            </div>
+            <div *ngIf="!selectedFileContent" class="no-file-selected">
+              <i class="fas fa-hand-point-left"></i>
+              <p>Select a file from the tree to view its content</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
