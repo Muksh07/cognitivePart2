@@ -92,45 +92,54 @@
       <div class="col-md-4 tree-section">
         <div class="card">
           <div class="card-header">
-            <h5 class="mb-0">
-              <i class="fas fa-folder-tree me-2"></i>
-              File Structure
-            </h5>
+            <h5 class="mb-0">File Structure</h5>
           </div>
           <div class="card-body p-0">
             <div class="tree-view">
               <ng-container *ngFor="let item of fileStructure; trackBy: trackByPath">
                 <div *ngIf="shouldShowNode(item)" class="tree-item">
-                  <div 
-                    [class.folder]="item.type === 'folder'"
-                    [class.file]="item.type === 'file'"
-                    (click)="onFileClick(item)"
-                    class="node-item">
-                    <i [class]="item.type === 'folder' ? 'fas fa-folder me-2' : 'fas fa-file-code me-2'"></i>
+                  <div class="node-item d-flex align-items-center"
+                       [class.folder]="item.type === 'folder'"
+                       [class.file]="item.type === 'file'"
+                       (click)="onFileClick(item)">
+                    <span class="toggle-icon me-2" *ngIf="item.type === 'folder'">
+                      {{ item.expanded ? '[-]' : '[+]' }}
+                    </span>
+                    <span class="toggle-icon me-2" *ngIf="item.type === 'file'">
+                      &nbsp;&nbsp;&nbsp;
+                    </span>
                     {{ item.name }}
                   </div>
-                  <div *ngIf="item.type === 'folder' && item.children && item.children.length > 0" 
-                       class="children">
+                  <div *ngIf="item.type === 'folder' && item.children && item.children.length > 0 && item.expanded" 
+                       class="children ms-3">
                     <ng-container *ngFor="let child of item.children; trackBy: trackByPath">
                       <div *ngIf="shouldShowNode(child)" class="tree-item">
-                        <div 
-                          [class.folder]="child.type === 'folder'"
-                          [class.file]="child.type === 'file'"
-                          (click)="onFileClick(child)"
-                          class="node-item">
-                          <i [class]="child.type === 'folder' ? 'fas fa-folder me-2' : 'fas fa-file-code me-2'"></i>
+                        <div class="node-item d-flex align-items-center"
+                             [class.folder]="child.type === 'folder'"
+                             [class.file]="child.type === 'file'"
+                             (click)="onFileClick(child)">
+                          <span class="toggle-icon me-2" *ngIf="child.type === 'folder'">
+                            {{ child.expanded ? '[-]' : '[+]' }}
+                          </span>
+                          <span class="toggle-icon me-2" *ngIf="child.type === 'file'">
+                            &nbsp;&nbsp;&nbsp;
+                          </span>
                           {{ child.name }}
                         </div>
-                        <div *ngIf="child.type === 'folder' && child.children && child.children.length > 0" 
-                             class="children">
+                        <div *ngIf="child.type === 'folder' && child.children && child.children.length > 0 && child.expanded" 
+                             class="children ms-3">
                           <ng-container *ngFor="let subChild of child.children; trackBy: trackByPath">
                             <div *ngIf="shouldShowNode(subChild)" class="tree-item">
-                              <div 
-                                [class.folder]="subChild.type === 'folder'"
-                                [class.file]="subChild.type === 'file'"
-                                (click)="onFileClick(subChild)"
-                                class="node-item">
-                                <i [class]="subChild.type === 'folder' ? 'fas fa-folder me-2' : 'fas fa-file-code me-2'"></i>
+                              <div class="node-item d-flex align-items-center"
+                                   [class.folder]="subChild.type === 'folder'"
+                                   [class.file]="subChild.type === 'file'"
+                                   (click)="onFileClick(subChild)">
+                                <span class="toggle-icon me-2" *ngIf="subChild.type === 'folder'">
+                                  {{ subChild.expanded ? '[-]' : '[+]' }}
+                                </span>
+                                <span class="toggle-icon me-2" *ngIf="subChild.type === 'file'">
+                                  &nbsp;&nbsp;&nbsp;
+                                </span>
                                 {{ subChild.name }}
                               </div>
                             </div>

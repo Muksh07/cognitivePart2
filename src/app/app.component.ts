@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import  JSZip from 'jszip';
+import JSZip from 'jszip';
 
 interface FileNode {
   name: string;
@@ -8,6 +8,7 @@ interface FileNode {
   content?: string;
   children?: FileNode[];
   path: string;
+  expanded?: boolean; // Add this property for tracking expansion state
 }
 
 @Component({
@@ -28,7 +29,6 @@ export class AppComponent {
   isUploading: boolean = false;
   selectedFile: File | null = null;
 
-
   // Add trackBy functions
   trackByPath(index: number, node: FileNode): string {
     return node.path;
@@ -36,6 +36,12 @@ export class AppComponent {
 
   onFileSelected(event: any) {
     this.selectedFile = event.target.files[0];
+  }
+
+  toggleFolder(node: FileNode) {
+    if (node.type === 'folder') {
+      node.expanded = !node.expanded;
+    }
   }
 
   async startUpload() {
@@ -50,7 +56,6 @@ export class AppComponent {
     try {
       const zip = new JSZip();
       
-      // Simulate progress updates
       const progressInterval = setInterval(() => {
         if (this.uploadProgress < 90) {
           this.uploadProgress += 10;
@@ -80,7 +85,6 @@ export class AppComponent {
       clearInterval(progressInterval);
       this.uploadProgress = 100;
       
-      // Small delay before showing explorer
       setTimeout(() => {
         this.showFileExplorer = true;
         this.isUploading = false;
@@ -102,7 +106,6 @@ export class AppComponent {
     if (node.type === 'file') {
       return this.isAllowedFile(node.name);
     }
-    // Show folder if it has any valid children (recursively)
     if (node.type === 'folder' && node.children) {
       return node.children.some(child => 
         child.type === 'file' ? this.isAllowedFile(child.name) : this.shouldShowNode(child)
@@ -115,9 +118,7 @@ export class AppComponent {
     for (let i = nodes.length - 1; i >= 0; i--) {
       const node = nodes[i];
       if (node.type === 'folder' && node.children) {
-        // Recursively clean up children
         const hasValidChildren = !this.cleanupEmptyFolders(node.children);
-        // Remove folder if it has no valid children
         if (!hasValidChildren) {
           nodes.splice(i, 1);
         }
@@ -147,6 +148,7 @@ export class AppComponent {
           type: isLastPart && !isDirectory ? 'file' : 'folder',
           path: parts.slice(0, i + 1).join('/'),
           children: isLastPart && !isDirectory ? undefined : [],
+          expanded: false // Initialize as collapsed
         };
 
         currentLevel.push(newNode);
@@ -161,6 +163,8 @@ export class AppComponent {
     if (node.type === 'file') {
       this.selectedFileName = node.name;
       this.selectedFileContent = this.fileMetadata.get(node.path) || 'Unable to read file content';
+    } else if (node.type === 'folder') {
+      this.toggleFolder(node);
     }
   }
 }
