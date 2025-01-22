@@ -1,12 +1,19 @@
 <!-- app.component.html -->
-<nav class="navbar navbar-expand-lg">
-  <div class="container">
-    <a class="navbar-brand" href="#">
-      <i class="fas fa-file-archive me-2"></i>
-      ZIP File Explorer
-    </a>
+<div class="container">
+  <div class="top">
+    <div class="titles" style="display: flex; align-items: center;">
+      <div class="title">EXL</div>
+      <div class="divider"></div>
+      <div class="subtitle">NeuraCraft</div>
+    </div>
+    <header>
+      <nav>
+        <button *ngFor="let tab of tabs" (click)="setActiveTab(tab)" [class.active]="activeTab === tab">
+          {{ tab }}
+        </button>
+      </nav>
+    </header>
   </div>
-</nav>
 
 <div class="container mt-4">
   <!-- Upload Page -->
@@ -61,24 +68,6 @@
                 {{ uploadProgress }}%
               </div>
             </div>
-          </div>
-        </div>
-
-        <div class="card mt-4">
-          <div class="card-header">
-            <h5 class="mb-0">Supported Files</h5>
-          </div>
-          <div class="card-body">
-            <ul class="list-group">
-              <li class="list-group-item d-flex align-items-center">
-                <i class="fas fa-file-code me-2"></i>
-                C# Files (.cs)
-              </li>
-              <li class="list-group-item d-flex align-items-center">
-                <i class="fas fa-file-code me-2"></i>
-                JSON Files (.json)
-              </li>
-            </ul>
           </div>
         </div>
       </div>

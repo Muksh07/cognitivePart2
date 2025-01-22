@@ -19,6 +19,22 @@ interface FileNode {
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
+
+  activeTab: string = 'Source Import';
+  activeBlueprintingSubTab: string = 'Models';
+  title = 'Frontend';
+
+  // Tabs and sub-tabs
+  tabs: string[] = [
+    'Source Import',
+    'File Explorer',
+    'Code Synthesis',
+  ];
+  
+  setActiveTab(tab: string) {
+    this.activeTab = tab;
+  }
   fileStructure: FileNode[] = [];
   showFileExplorer = false;
   selectedFileContent: string | null = null;

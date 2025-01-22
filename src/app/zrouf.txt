@@ -1,109 +1,154 @@
-import { Component } from '@angular/core';
-import { MatTreeModule } from '@angular/material/tree';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { FlatTreeControl } from '@angular/cdk/tree';
-import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
-import { CommonModule } from '@angular/common';
-import JSZip from 'jszip';
-
-interface FileNode {
-  name: string;
-  type: string;
-  children?: FileNode[];
+*{
+  /* margin: 0; */
+  padding: 0;
 }
 
-interface FlatNode {
-  expandable: boolean;
-  name: string;
-  level: number;
+.container {
+  font-family: 'Inter', sans-serif;
+  max-width: 100%;
+  background-color: #f4f5f7;
+  height: 100vh; 
 }
 
-@Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [ MatTreeModule, MatIconModule, MatButtonModule, CommonModule],
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
-})
-export class AppComponent {
-  selectedFile: File | null = null;
-  isTreeView: boolean = false;
-  folderStructure: FileNode[] = [];
-
-  private transformer = (node: FileNode, level: number): FlatNode => {
-    return {
-      expandable: !!node.children && node.children.length > 0,
-      name: node.name,
-      level: level,
-    };
-  };
-
-  treeControl = new FlatTreeControl<FlatNode>(
-    (node) => node.level,
-    (node) => node.expandable
-  );
-
-  treeFlattener = new MatTreeFlattener(
-    this.transformer,
-    (node) => node.level,
-    (node) => node.expandable,
-    (node) => node.children
-  );
-
-  dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
-
-  onFileSelect(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      const fileName = file.name.toLowerCase();
-      const isZip = fileName.endsWith('.zip');
-      if (isZip) {
-        this.selectedFile = file;
-      } else {
-        alert('Please upload a valid ZIP file.');
-        this.selectedFile = null;
-      }
-    }
-  }
-
-  async uploadFile(): Promise<void> {
-    if (this.selectedFile) {
-      const zip = new JSZip();
-      const folderStructure: FileNode[] = [];
-
-      try {
-        const zipContent = await zip.loadAsync(this.selectedFile);
-        zipContent.forEach((relativePath, file) => {
-          const pathParts = relativePath.split('/');
-          let currentLevel = folderStructure;
-
-          pathParts.forEach((part, index) => {
-            let node = currentLevel.find((item) => item.name === part);
-            if (!node) {
-              node = { name: part, children: [] };
-              currentLevel.push(node);
-            }
-            currentLevel = node.children!;
-          });
-        });
-
-        this.folderStructure = folderStructure;
-        this.isTreeView = true;
-      } catch (error) {
-        console.error('Error reading ZIP file:', error);
-        alert('Failed to read ZIP file.');
-      }
-    }
-  }
-
-  goBack(): void {
-    this.isTreeView = false;
-    this.selectedFile = null;
-    this.folderStructure = [];
-    this.dataSource.data = [];
-  }
-
-  hasChild = (_: number, node: FlatNode) => node.expandable;
+.top{
+  background-image: url('../assets/Images/uu.png');
+  background-size: cover;
+  background-position: center;
+  position: relative;
 }
+
+.title{
+  padding: 12px 10px;
+  color: #fb4e0b; 
+  /* background-color:#fb4e0b ; */
+  font-size: 20px;
+  font-weight: bold;
+}
+
+
+.divider{
+  border-left: 2px solid white; /* Adjust the color and width as needed */
+  height: 20px;
+}
+
+.subtitle{
+  font-family: 'Yantramanav', sans-serif;
+  display: block;
+    margin-left: 10px;
+    margin-bottom: 0;
+    /* padding-left: 8px; */
+    font-size: 15px;
+    color: #fb4e0b;
+    border-left: 0;
+    font-style: normal;
+    font-weight: bold;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 5px;
+}
+
+nav {
+  display: flex;
+  padding: 4px;
+  border-radius: 4px 4px 0 0;
+}
+
+header nav button {
+  background-color: transparent;
+  /* color: #a0a0a0; */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 400;
+  border-radius: 4px 4px 0 0;
+  cursor: pointer;
+  transition: color 0.3s ease, background-color 0.3s ease;
+  position: relative;
+}
+
+header nav button.active {
+  background-color: #fb4e0b;
+  color: #ffffff;
+  /* border-bottom: 2px solid #fb4e0b; */
+}
+
+.blue-nav  button.active {
+  background-color: #fb4e0b;
+  color: #ffffff;
+  /* border-bottom: 2px solid #fb4e0b; */
+}
+
+/* nav button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 0;
+  height: 50%;
+  width: 1px;
+  background-color: #fb4e0b;
+  transform: translateY(-50%);
+} */
+
+nav button:hover {
+  color: #ffffff;
+  background-color: #fb4e0b;
+}
+
+nav .blueprinting-sub-tab {
+  padding: 8px 16px;
+  margin: 2px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.blue-nav{
+  background-color: #6c757d;
+}
+nav .blueprinting-sub-tab.active {
+  color: #ffffff;
+}
+ 
+nav .blueprinting-sub-tab:hover {
+  color: #ffffff;
+}
+.btn-primary.custom {
+  background-color: #fb4e0b;
+  border-color: #fb4e0b;
+  font-size: 11px;
+  font-weight: bold;
+  border-radius: 8px;
+  margin: 2px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.hidden {
+  display: none;
+}
+
+
 
