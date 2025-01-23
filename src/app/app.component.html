@@ -15,14 +15,13 @@
     </header>
   </div>
 
-<div class="container mt-4">
+
   <!-- Upload Page -->
-  <div *ngIf="!showFileExplorer" class="upload-section">
-    <div class="row justify-content-center">
+  <div *ngIf="activeTab === 'Source Import'" class="upload-section">
       <div class="col-md-8">
         <div class="card">
           <div class="card-header">
-            <h4 class="mb-0">Upload ZIP File</h4>
+            <h3 class="mb-0">Upload ZIP File</h3>
           </div>
           <div class="card-body text-center">
             <div class="upload-icon mb-4">
@@ -68,18 +67,27 @@
                 {{ uploadProgress }}%
               </div>
             </div>
+
+            <div class="mt-4">
+              <button 
+                class="btn btn-success" 
+                (click)="navigateToFileExplorer()"
+                [disabled]="fileStructure.length === 0">
+                Next
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
   </div>
 
   <!-- Explorer Page -->
-  <div *ngIf="showFileExplorer" class="explorer-container">
+  <!-- File Explorer Tab -->
+  <div *ngIf="activeTab === 'File Explorer'" class="explorer-container">
     <div class="row">
       <!-- Left side - Tree Structure -->
       <div class="col-md-4 tree-section">
-        <div class="card">
+        <div class="card card2">
           <div class="card-header">
             <h5 class="mb-0">File Structure</h5>
           </div>
@@ -99,43 +107,44 @@
                     </span>
                     {{ item.name }}
                   </div>
+                  <!-- Nested folder structure remains the same -->
                   <div *ngIf="item.type === 'folder' && item.children && item.children.length > 0 && item.expanded" 
-                       class="children ms-3">
-                    <ng-container *ngFor="let child of item.children; trackBy: trackByPath">
-                      <div *ngIf="shouldShowNode(child)" class="tree-item">
-                        <div class="node-item d-flex align-items-center"
-                             [class.folder]="child.type === 'folder'"
-                             [class.file]="child.type === 'file'"
-                             (click)="onFileClick(child)">
-                          <span class="toggle-icon me-2" *ngIf="child.type === 'folder'">
-                            {{ child.expanded ? '[-]' : '[+]' }}
-                          </span>
-                          <span class="toggle-icon me-2" *ngIf="child.type === 'file'">
-                            &nbsp;&nbsp;&nbsp;
-                          </span>
-                          {{ child.name }}
-                        </div>
-                        <div *ngIf="child.type === 'folder' && child.children && child.children.length > 0 && child.expanded" 
-                             class="children ms-3">
-                          <ng-container *ngFor="let subChild of child.children; trackBy: trackByPath">
-                            <div *ngIf="shouldShowNode(subChild)" class="tree-item">
-                              <div class="node-item d-flex align-items-center"
-                                   [class.folder]="subChild.type === 'folder'"
-                                   [class.file]="subChild.type === 'file'"
-                                   (click)="onFileClick(subChild)">
-                                <span class="toggle-icon me-2" *ngIf="subChild.type === 'folder'">
-                                  {{ subChild.expanded ? '[-]' : '[+]' }}
-                                </span>
-                                <span class="toggle-icon me-2" *ngIf="subChild.type === 'file'">
-                                  &nbsp;&nbsp;&nbsp;
-                                </span>
-                                {{ subChild.name }}
-                              </div>
-                            </div>
-                          </ng-container>
-                        </div>
-                      </div>
-                    </ng-container>
+                    class="children ms-3">
+                  <ng-container *ngFor="let child of item.children; trackBy: trackByPath">
+                   <div *ngIf="shouldShowNode(child)" class="tree-item">
+                     <div class="node-item d-flex align-items-center"
+                          [class.folder]="child.type === 'folder'"
+                          [class.file]="child.type === 'file'"
+                          (click)="onFileClick(child)">
+                       <span class="toggle-icon me-2" *ngIf="child.type === 'folder'">
+                         {{ child.expanded ? '[-]' : '[+]' }}
+                       </span>
+                       <span class="toggle-icon me-2" *ngIf="child.type === 'file'">
+                         &nbsp;&nbsp;&nbsp;
+                       </span>
+                       {{ child.name }}
+                     </div>
+                     <div *ngIf="child.type === 'folder' && child.children && child.children.length > 0 && child.expanded" 
+                          class="children ms-3">
+                       <ng-container *ngFor="let subChild of child.children; trackBy: trackByPath">
+                         <div *ngIf="shouldShowNode(subChild)" class="tree-item">
+                           <div class="node-item d-flex align-items-center"
+                                [class.folder]="subChild.type === 'folder'"
+                                [class.file]="subChild.type === 'file'"
+                                (click)="onFileClick(subChild)">
+                             <span class="toggle-icon me-2" *ngIf="subChild.type === 'folder'">
+                               {{ subChild.expanded ? '[-]' : '[+]' }}
+                             </span>
+                             <span class="toggle-icon me-2" *ngIf="subChild.type === 'file'">
+                               &nbsp;&nbsp;&nbsp;
+                             </span>
+                             {{ subChild.name }}
+                           </div>
+                         </div>
+                       </ng-container>
+                     </div>
+                   </div>
+                  </ng-container>
                   </div>
                 </div>
               </ng-container>
@@ -167,3 +176,13 @@
     </div>
   </div>
 </div>
+
+
+
+
+
+
+
+
+
+

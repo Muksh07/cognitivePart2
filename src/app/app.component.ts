@@ -35,6 +35,7 @@ export class AppComponent {
   setActiveTab(tab: string) {
     this.activeTab = tab;
   }
+
   fileStructure: FileNode[] = [];
   showFileExplorer = false;
   selectedFileContent: string | null = null;
@@ -57,6 +58,16 @@ export class AppComponent {
   toggleFolder(node: FileNode) {
     if (node.type === 'folder') {
       node.expanded = !node.expanded;
+    }
+  }
+
+  // New method to move to file explorer
+  navigateToFileExplorer() {
+    if (this.fileStructure.length > 0) {
+      this.showFileExplorer = true;
+      this.activeTab = 'File Explorer';
+    } else {
+      alert('Please upload a ZIP file first');
     }
   }
 
@@ -102,7 +113,6 @@ export class AppComponent {
       this.uploadProgress = 100;
       
       setTimeout(() => {
-        this.showFileExplorer = true;
         this.isUploading = false;
       }, 500);
 
@@ -113,6 +123,7 @@ export class AppComponent {
       this.uploadProgress = 0;
     }
   }
+
 
   isAllowedFile(filename: string): boolean {
     return this.allowedExtensions.some(ext => filename.toLowerCase().endsWith(ext));

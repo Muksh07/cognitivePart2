@@ -1,22 +1,24 @@
 /* app.component.css */
 /* Navbar Styles */
 *{
-    /* margin: 0; */
+    margin: 0;
     padding: 0;
   }
-  
+
   .container {
     font-family: 'Inter', sans-serif;
     max-width: 100%;
     background-color: #f4f5f7;
-    height: 100vh; 
-  }
+    height: 100vh;
+    overflow: hidden;    
+}
   
   .top{
     background-image: url('../assets/Images/uu.png');
     background-size: cover;
     background-position: center;
     position: relative;
+    
   }
   
   .title{
@@ -29,7 +31,7 @@
   
   
   .divider{
-    border-left: 2px solid white; /* Adjust the color and width as needed */
+    border-left: 2px solid white; 
     height: 20px;
   }
   
@@ -50,7 +52,6 @@
     display: flex;
     align-items: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 5px;
   }
   
   nav {
@@ -85,16 +86,6 @@
     /* border-bottom: 2px solid #fb4e0b; */
   }
   
-  /* nav button::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: 0;
-    height: 50%;
-    width: 1px;
-    background-color: #fb4e0b;
-    transform: translateY(-50%);
-  } */
   
   nav button:hover {
     color: #ffffff;
@@ -133,16 +124,34 @@
   
   /* Upload Section Styles */
   .upload-section {
-    min-height: calc(100vh - 100px);
-    padding: 2rem 0;
-  }
-  
-  .card {
-    border: none;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    border-radius: 10px;
+    height: 100vh;
     overflow: hidden;
-  }
+    padding: 1rem;
+    background-color: #6c757d; 
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; 
+}
+
+
+
+.explorer-container{
+    height: calc(100vh - 120px);
+    overflow: hidden;
+    padding: 1rem;
+    margin: 0px;
+}
+
+  .card {
+    height: 100%;
+    margin: 2px;
+}
+
+.card-body {
+    height: calc(100% - 60px);
+    overflow: hidden;
+    padding: 1rem;
+}
   
   .card-header {
     background-color: #fff;
@@ -150,9 +159,10 @@
     padding: 1.25rem;
   }
   
-  .card-header h4, .card-header h5 {
-    color: #2c3e50;
+  .card-header h3, .card-header h5 {
+    color: black;
     font-weight: 500;
+    text-align: center;
   }
   
   .upload-icon {
@@ -185,40 +195,41 @@
   .btn-outline-primary:hover {
     background-color: #ff6b35;
     border-color: #ff6b35;
+    color: #fff;
+  }
+  .btn-success{
+       font-size: medium;
+       padding: 0.5rem 1.5rem;
+       background-color: black;
+       border-color: black;
   }
   
   .selected-file {
     color: #666;
     font-size: 0.9rem;
   }
+  .file-content {
+    height: calc(100vh - 250px);
+    overflow-y: auto;
+}
   
-  /* Progress Bar Styles */
-  .progress {
-    height: 1.5rem;
-    border-radius: 0.75rem;
-    background-color: #f8f9fa;
-  }
-  
+  /* Progress Bar Styles */  
   .progress-bar {
     background-color: #ff6b35;
     border-radius: 0.75rem;
   }
   
   /* Explorer Styles */
-  .explorer-container {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-  }
-  
   .tree-section, .content-section {
-    margin-bottom: 1rem;
-  }
-  
+    height: 75vh;
+    margin-bottom: 0;
+}
+
   .tree-view {
-    max-height: calc(100vh - 250px);
+    max-height: calc(100vh - 220px);
     overflow-y: auto;
-    padding: 1rem;
-  }
+    padding: 0.5rem;
+}
   
   .tree-item {
     margin: 5px 0;
@@ -256,20 +267,18 @@
     border-left: 2px solid #eee;
     padding-left: 10px;
   }
-  
-  .file-content {
-    height: calc(100vh - 300px);
-    overflow-y: auto;
-  }
-  
+
   pre {
-    background-color: #f8f9fa;
-    padding: 1rem;
-    border-radius: 6px;
+    max-height: 100%;
+    overflow-y: auto;
     margin: 0;
     white-space: pre-wrap;
     word-wrap: break-word;
-  }
+}
+
+.progress {
+    margin-bottom: 1rem;
+}
   
   /* No File Selected State */
   .no-file-selected {
