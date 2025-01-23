@@ -129,11 +129,27 @@
     padding: 1rem;
     background-color: #6c757d; 
     display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; 
 }
 
+.upload-section .row {
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+}
 
+.upload-col, .tree-col, .content-col {
+    height: 80vh;
+    padding: 0 0.5rem;
+}
+
+.empty-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    color: #999;
+    text-align: center;
+}
 
 .explorer-container{
     height: calc(100vh - 120px);

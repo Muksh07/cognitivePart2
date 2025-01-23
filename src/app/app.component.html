@@ -1,4 +1,3 @@
-<!-- app.component.html -->
 <div class="container">
   <div class="top">
     <div class="titles" style="display: flex; align-items: center;">
@@ -15,11 +14,11 @@
     </header>
   </div>
 
-
   <!-- Upload Page -->
   <div *ngIf="activeTab === 'Source Import'" class="upload-section">
-      <div class="col-md-8">
-        <div class="card">
+    <div class="row">
+      <div class="col-md-4 upload-col">
+        <div class="card h-100">
           <div class="card-header">
             <h3 class="mb-0">Upload ZIP File</h3>
           </div>
@@ -67,122 +66,77 @@
                 {{ uploadProgress }}%
               </div>
             </div>
-
-            <div class="mt-4">
-              <button 
-                class="btn btn-success" 
-                (click)="navigateToFileExplorer()"
-                [disabled]="fileStructure.length === 0">
-                Next
-              </button>
-            </div>
           </div>
         </div>
       </div>
-  </div>
 
-  <!-- Explorer Page -->
-  <!-- File Explorer Tab -->
-  <div *ngIf="activeTab === 'File Explorer'" class="explorer-container">
-    <div class="row">
-      <!-- Left side - Tree Structure -->
-      <div class="col-md-4 tree-section">
-        <div class="card card2">
+      <!-- File Explorer Section -->
+      <div class="col-md-4 tree-col">
+        <div class="card h-100">
           <div class="card-header">
             <h5 class="mb-0">File Structure</h5>
           </div>
           <div class="card-body p-0">
             <div class="tree-view">
-              <ng-container *ngFor="let item of fileStructure; trackBy: trackByPath">
-                <div *ngIf="shouldShowNode(item)" class="tree-item">
-                  <div class="node-item d-flex align-items-center"
-                       [class.folder]="item.type === 'folder'"
-                       [class.file]="item.type === 'file'"
-                       (click)="onFileClick(item)">
-                    <span class="toggle-icon me-2" *ngIf="item.type === 'folder'">
-                      {{ item.expanded ? '[-]' : '[+]' }}
-                    </span>
-                    <span class="toggle-icon me-2" *ngIf="item.type === 'file'">
-                      &nbsp;&nbsp;&nbsp;
-                    </span>
-                    {{ item.name }}
-                  </div>
-                  <!-- Nested folder structure remains the same -->
-                  <div *ngIf="item.type === 'folder' && item.children && item.children.length > 0 && item.expanded" 
-                    class="children ms-3">
-                  <ng-container *ngFor="let child of item.children; trackBy: trackByPath">
-                   <div *ngIf="shouldShowNode(child)" class="tree-item">
-                     <div class="node-item d-flex align-items-center"
-                          [class.folder]="child.type === 'folder'"
-                          [class.file]="child.type === 'file'"
-                          (click)="onFileClick(child)">
-                       <span class="toggle-icon me-2" *ngIf="child.type === 'folder'">
-                         {{ child.expanded ? '[-]' : '[+]' }}
-                       </span>
-                       <span class="toggle-icon me-2" *ngIf="child.type === 'file'">
-                         &nbsp;&nbsp;&nbsp;
-                       </span>
-                       {{ child.name }}
-                     </div>
-                     <div *ngIf="child.type === 'folder' && child.children && child.children.length > 0 && child.expanded" 
-                          class="children ms-3">
-                       <ng-container *ngFor="let subChild of child.children; trackBy: trackByPath">
-                         <div *ngIf="shouldShowNode(subChild)" class="tree-item">
-                           <div class="node-item d-flex align-items-center"
-                                [class.folder]="subChild.type === 'folder'"
-                                [class.file]="subChild.type === 'file'"
-                                (click)="onFileClick(subChild)">
-                             <span class="toggle-icon me-2" *ngIf="subChild.type === 'folder'">
-                               {{ subChild.expanded ? '[-]' : '[+]' }}
-                             </span>
-                             <span class="toggle-icon me-2" *ngIf="subChild.type === 'file'">
-                               &nbsp;&nbsp;&nbsp;
-                             </span>
-                             {{ subChild.name }}
-                           </div>
-                         </div>
-                       </ng-container>
-                     </div>
-                   </div>
-                  </ng-container>
-                  </div>
-                </div>
+              <div *ngIf="!uploadComplete" class="empty-state">
+                <p>No files uploaded yet</p>
+              </div>
+              <ng-container *ngIf="uploadComplete">
+                <ng-container *ngTemplateOutlet="nodeList; context: { $implicit: fileStructure, level: 0 }"></ng-container>
               </ng-container>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Right side - File Content -->
-      <div class="col-md-8 content-section">
+      <!-- File Content Section -->
+      <div class="col-md-4 content-col">
         <div class="card h-100">
           <div class="card-header">
             <h5 class="mb-0">
               <i class="fas fa-file-lines me-2"></i>
-              {{ selectedFileName || 'File Content' }}
+              File Content
             </h5>
           </div>
           <div class="card-body">
-            <div *ngIf="selectedFileContent" class="file-content">
-              <pre>{{ selectedFileContent }}</pre>
-            </div>
             <div *ngIf="!selectedFileContent" class="no-file-selected">
               <i class="fas fa-hand-point-left"></i>
               <p>Select a file from the tree to view its content</p>
+            </div>
+            <div *ngIf="selectedFileContent" class="file-content">
+              <pre>{{ selectedFileContent }}</pre>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Placeholder Sections for other tabs -->
+  <div *ngIf="activeTab === 'File Explorer'"></div>
+  <div *ngIf="activeTab === 'Code Synthesis'"></div>
 </div>
 
-
-
-
-
-
-
-
-
-
+<!-- Recursive Template for Nested Folders -->
+<ng-template #nodeList let-nodes let-level="level">
+  <ng-container *ngFor="let node of nodes; trackBy: trackByPath">
+    <div *ngIf="shouldShowNode(node)" class="tree-item" [style.margin-left.px]="level * 20">
+      <div class="node-item d-flex align-items-center"
+           [class.folder]="node.type === 'folder'"
+           [class.file]="node.type === 'file'"
+           (click)="onFileClick(node)">
+        <span class="toggle-icon me-2" *ngIf="node.type === 'folder'">
+          {{ node.expanded ? '[-]' : '[+]' }}
+        </span>
+        <span class="toggle-icon me-2" *ngIf="node.type === 'file'">
+          &nbsp;&nbsp;&nbsp;
+        </span>
+        {{ node.name }}
+      </div>
+      
+      <ng-container *ngIf="node.type === 'folder' && node.children && node.children.length > 0 && node.expanded">
+        <ng-container *ngTemplateOutlet="nodeList; context: { $implicit: node.children, level: level + 1 }"></ng-container>
+      </ng-container>
+    </div>
+  </ng-container>
+</ng-template>

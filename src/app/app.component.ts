@@ -8,7 +8,7 @@ interface FileNode {
   content?: string;
   children?: FileNode[];
   path: string;
-  expanded?: boolean; // Add this property for tracking expansion state
+  expanded?: boolean;
 }
 
 @Component({
@@ -19,13 +19,10 @@ interface FileNode {
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-
-
   activeTab: string = 'Source Import';
   activeBlueprintingSubTab: string = 'Models';
   title = 'Frontend';
 
-  // Tabs and sub-tabs
   tabs: string[] = [
     'Source Import',
     'File Explorer',
@@ -37,7 +34,6 @@ export class AppComponent {
   }
 
   fileStructure: FileNode[] = [];
-  showFileExplorer = false;
   selectedFileContent: string | null = null;
   selectedFileName: string = '';
   fileMetadata: Map<string, string> = new Map();
@@ -45,8 +41,8 @@ export class AppComponent {
   uploadProgress: number = 0;
   isUploading: boolean = false;
   selectedFile: File | null = null;
+  uploadComplete: boolean = false;
 
-  // Add trackBy functions
   trackByPath(index: number, node: FileNode): string {
     return node.path;
   }
@@ -61,16 +57,6 @@ export class AppComponent {
     }
   }
 
-  // New method to move to file explorer
-  navigateToFileExplorer() {
-    if (this.fileStructure.length > 0) {
-      this.showFileExplorer = true;
-      this.activeTab = 'File Explorer';
-    } else {
-      alert('Please upload a ZIP file first');
-    }
-  }
-
   async startUpload() {
     if (!this.selectedFile) {
       alert('Please select a file first');
@@ -79,6 +65,7 @@ export class AppComponent {
 
     this.isUploading = true;
     this.uploadProgress = 0;
+    this.uploadComplete = false;
 
     try {
       const zip = new JSZip();
@@ -93,7 +80,6 @@ export class AppComponent {
       this.fileStructure = [];
       this.fileMetadata.clear();
 
-      // Process all files
       for (const [filePath, zipEntry] of Object.entries(zipContents.files)) {
         if (!zipEntry.name) continue;
 
@@ -107,13 +93,13 @@ export class AppComponent {
         this.addToFileStructure(filePath, zipEntry.dir);
       }
 
-      // Cleanup and finalize
       this.cleanupEmptyFolders(this.fileStructure);
       clearInterval(progressInterval);
       this.uploadProgress = 100;
       
       setTimeout(() => {
         this.isUploading = false;
+        this.uploadComplete = true;
       }, 500);
 
     } catch (error) {
@@ -123,7 +109,6 @@ export class AppComponent {
       this.uploadProgress = 0;
     }
   }
-
 
   isAllowedFile(filename: string): boolean {
     return this.allowedExtensions.some(ext => filename.toLowerCase().endsWith(ext));
@@ -175,7 +160,7 @@ export class AppComponent {
           type: isLastPart && !isDirectory ? 'file' : 'folder',
           path: parts.slice(0, i + 1).join('/'),
           children: isLastPart && !isDirectory ? undefined : [],
-          expanded: false // Initialize as collapsed
+          expanded: false
         };
 
         currentLevel.push(newNode);
