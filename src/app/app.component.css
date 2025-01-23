@@ -24,8 +24,7 @@
   .title{
     padding: 12px 10px;
     color: #fb4e0b; 
-    /* background-color:#fb4e0b ; */
-    font-size: 20px;
+    font-size: 25px;
     font-weight: bold;
   }
   
@@ -65,7 +64,7 @@
     /* color: #a0a0a0; */
     color: white;
     border: none;
-    padding: 8px 16px;
+    padding: 3px 6px;
     font-size: 14px;
     font-weight: 400;
     border-radius: 4px 4px 0 0;
@@ -75,8 +74,8 @@
   }
   
   header nav button.active {
-    background-color: #fb4e0b;
-    color: #ffffff;
+    
+    color: #fb4e0b;
     /* border-bottom: 2px solid #fb4e0b; */
   }
   
@@ -88,8 +87,8 @@
   
   
   nav button:hover {
-    color: #ffffff;
-    background-color: #fb4e0b;
+    color: #fb4e0b;
+    /* background-color: #fb4e0b; */
   }
   
   nav .blueprinting-sub-tab {

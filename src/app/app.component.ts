@@ -43,6 +43,9 @@ export class AppComponent {
   selectedFile: File | null = null;
   uploadComplete: boolean = false;
 
+
+  
+
   trackByPath(index: number, node: FileNode): string {
     return node.path;
   }
